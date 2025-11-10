@@ -17,7 +17,7 @@
 --         pdays:=pdays+30;
 --     end if;
 
---     if pdays<0 then
+--     if pmonth<0 then
 --         pyears:=pyears-1;
 --         pmonth:=pmonth+12;
 --     end if;
@@ -32,4 +32,5 @@ BEGIN
     pyears:=AGE_CALC(date '2005-11-9',pmonth,pdays);
     dbms_output.put_line('Age; '||pyears||'years'||pmonth||'months'||pdays||'days');
 end;
+
 /
