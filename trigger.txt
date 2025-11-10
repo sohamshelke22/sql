@@ -1,0 +1,14 @@
+create or replace trigger bt
+before update or delete on library
+for each ROW
+BEGIN
+    insert into LIBRARYAUDIT VALUES(:OLD.roll,:OLD.name,:OLD.dateofissue,:OLD.nameofbook,:OLD.status,systimestamp);
+end;
+/
+create or replace trigger at
+after update or delete on library
+for each ROW
+BEGIN
+    insert into LIBRARYAUDIT VALUES(:OLD.roll,:OLD.name,:OLD.dateofissue,:OLD.nameofbook,:OLD.status,systimestamp);
+end;
+/

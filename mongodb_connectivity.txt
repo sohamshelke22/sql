@@ -1,0 +1,120 @@
+python file 
+
+from pymongo import MongoClient
+client = MongoClient("mongodb://127.0.0.1:27017")
+database = client.test2
+collection = database.info
+collection.delete_many({})
+collection.insert_one({"name": "Abc", "city": "Pune", "age": 20})
+collection.insert_many([{"name": "Pqr", "city": "Delhi", "age": 26}, {"name": "Xyz", "city": "Mumbai", "age": 19}, {"name": "Efg", "city": "Chennai", "age": 30}, {"name": "Lmn", "city": "Shimla", "age": 32}])
+for document in collection.find():
+    print(document)
+collection.update_one({"name": "Pqr"}, {"$set": {"city": "Ranchi"}})
+print("--- After Update ---")
+for document in collection.find():
+    print(document)
+collection.delete_one({"age": 19})
+print("--- After Delete ---")
+for document in collection.find():
+    print(document)
+client.close()
+exit()
+
+mongodb 
+admin1@admin1-HP-Pro-SFF-280-G9-Desktop-PC:~$ mongosh 
+Current Mongosh Log ID: 
+Connecting to: 
+68e8a5ff627ad25429ce5f46 
+mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2
+ .5.8 
+Using MongoDB:  
+Using Mongosh:  
+6.0.26 
+2.5.8 
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/ 
+test> use test2 
+switched to db test2 
+test2> db.createCollection("info") 
+{ ok: 1 } 
+test2> exit 
+admin1@admin1-HP-Pro-SFF-280-G9-Desktop-PC:~$ sudo python3 -m pip install pymongo 
+[sudo] password for admin1:  
+
+Requirement already satisfied: pymongo in /usr/local/lib/python3.10/dist-packages (4.15.3) 
+Requirement already satisfied: dnspython<3.0.0,>=1.16.0 in /usr/local/lib/python3.10/dist-packages (from pymongo) 
+(2.8.0) 
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system 
+package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv 
+admin1@admin1-HP-Pro-SFF-280-G9-Desktop-PC:~$ python3 
+Python 3.10.12 (main, Aug 15 2025, 14:32:43) [GCC 11.4.0] on linux 
+Type "help", "copyright", "credits" or "license" for more information. 
+>>> from pymongo import MongoClient 
+>>> client = MongoClient("mongodb://127.0.0.1:27017") 
+>>> database = client.test2 
+>>> collection = database.info 
+>>> collection.insert_one({"name": "Abc", "city": "Pune", "age": 20}) 
+InsertOneResult(ObjectId('68e8a65da6b3d86f02df537e'), acknowledged=True) 
+>>> collection.insert_many([{"name": "Pqr", "city": "Delhi", "age": 26}, {"name": "Xyz", "city": "Mumbai", "age": 19}, 
+{"name": "Efg", "city": "Chennai", "age": 30}, {"name": "Lmn", "city": "Shimla", "age": 32}]) 
+InsertManyResult([ObjectId('68e8a667a6b3d86f02df537f'), ObjectId('68e8a667a6b3d86f02df5380'), 
+ObjectId('68e8a667a6b3d86f02df5381'), ObjectId('68e8a667a6b3d86f02df5382')], acknowledged=True) 
+>>> collection.find() 
+<pymongo.synchronous.cursor.Cursor object at 0x7bbac62c5420> 
+>>> for document in collection.find(): 
+...     
+print(document) 
+admin1@admin1-HP-Pro-SFF-280-G9-Desktop-PC:~$ mongosh 
+Current Mongosh Log ID: 
+Connecting to: 
+68e8a6bf59e96c0fe7ce5f46 
+mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2
+ .5.8 
+Using MongoDB:  
+Using Mongosh:  
+6.0.26 
+2.5.8 
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/ 
+
+------
+
+The server generated these startup warnings when booting 
+2025-10-10T10:06:44.590+05:30: Using the XFS filesystem is strongly recommended with the WiredTiger storage 
+engine. See http://dochub.mongodb.org/core/prodnotes-filesystem 
+2025-10-10T10:06:44.888+05:30: Access control is not enabled for the database. Read and write access to data and 
+configuration is unrestricted 
+2025-10-10T10:06:44.888+05:30: vm.max_map_count is too low ------ 
+test> use test2 
+switched to db test2 
+test2> db.info.find() 
+[ 
+{ 
+_id: ObjectId('68e8a65da6b3d86f02df537e'), 
+name: 'Abc', 
+city: 'Pune', 
+age: 20 
+}, 
+{ 
+_id: ObjectId('68e8a667a6b3d86f02df537f'), 
+name: 'Pqr', 
+city: 'Delhi', 
+age: 26 
+}, 
+{ 
+_id: ObjectId('68e8a667a6b3d86f02df5380'), 
+name: 'Xyz', 
+city: 'Mumbai', 
+age: 19 
+}, 
+{ 
+_id: ObjectId('68e8a667a6b3d86f02df5381'), 
+name: 'Efg',
+city: 'Chennai', 
+age: 30 
+}, 
+{
+_id: ObjectId('68e8a667a6b3d86f02df5382'),
+name: 'Lmn', 
+city: 'Shimla', 
+age: 32
+}
+]

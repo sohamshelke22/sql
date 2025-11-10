@@ -1,0 +1,24 @@
+SET SERVEROUTPUT ON;
+
+CREATE OR REPLACE TRIGGER trg_salary_check
+AFTER INSERT OR UPDATE OR DELETE ON Emp
+FOR EACH ROW
+BEGIN
+    -- INSERT check
+    IF INSERTING AND :NEW.Emp_salary < 50000 THEN
+        DBMS_OUTPUT.PUT_LINE('Warning: Salary below 50,000 for new employee');
+        INSERT INTO Tracking VALUES(:NEW.Emp_no, :NEW.Emp_salary);
+    END IF;
+
+    -- UPDATE check
+    IF UPDATING AND :NEW.Emp_salary < 50000 THEN
+        DBMS_OUTPUT.PUT_LINE('Warning: Salary updated below 50,000');
+        INSERT INTO Tracking VALUES(:NEW.Emp_no, :NEW.Emp_salary);
+    END IF;
+
+    -- DELETE (no salary check required, but message shown)
+    IF DELETING THEN
+        DBMS_OUTPUT.PUT_LINE('Employee record deleted: ' || :OLD.Emp_no);
+    END IF;
+END;
+/

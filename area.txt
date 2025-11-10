@@ -1,0 +1,12 @@
+declare
+	r number;
+	a number;
+	pi constant number:=3.14;
+begin
+	for r in 5..9 loop
+		a:=pi*r*r;
+		
+		insert into areas values(r,a);
+	end loop;
+end;
+/

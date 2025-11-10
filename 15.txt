@@ -1,0 +1,32 @@
+-- Create table to store results
+CREATE TABLE areas (
+    radius NUMBER(5,2),
+    area NUMBER(10,2)
+);
+
+-- PL/SQL Block to calculate area for radius 5 to 9
+DECLARE
+    pi CONSTANT NUMBER := 3.14159;
+    radius NUMBER;
+    area NUMBER;
+BEGIN
+    -- Loop from radius 5 to 9 (integer values)
+    FOR radius IN 5..9 LOOP
+        -- Calculate area
+        area := pi * radius * radius;
+        
+        -- Insert into table
+        INSERT INTO areas VALUES (radius, area);
+        
+        -- Display output
+        DBMS_OUTPUT.PUT_LINE('Radius: ' || radius || ', Area: ' || ROUND(area, 2));
+    END LOOP;
+    
+    -- Commit the transaction
+    COMMIT;
+    
+    DBMS_OUTPUT.PUT_LINE('Area calculation completed successfully!');
+END;
+/
+-- View the results
+SELECT * FROM areas;

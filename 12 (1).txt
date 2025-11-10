@@ -1,0 +1,143 @@
+//--------------------------------------------
+// 🧩 Step 1: Use the Existing Database
+//--------------------------------------------
+use EmployeeDB_Agg
+
+
+//--------------------------------------------
+// 🧾 Step 2: Insert Sample Documents (if not already present)
+//--------------------------------------------
+db.Employee.insertMany([
+  {
+    Emp_id: 101,
+    Name: { FName: "Prashant", LName: "Holam" },
+    CompanyName: "TCS",
+    Salary: 55000,
+    Designation: "Developer",
+    Age: 26,
+    Expertise: ["Java", "MongoDB", "NodeJS"],
+    DOB: ISODate("1999-03-15"),
+    Email: "prashant.holam@tcs.com",
+    Contact: "9823456711",
+    Address: [{ PAddr: "Pune", LAddr: "Kharadi" }]
+  },
+  {
+    Emp_id: 102,
+    Name: { FName: "Swapnil", LName: "Jadhav" },
+    CompanyName: "Infosys",
+    Salary: 65000,
+    Designation: "DBA",
+    Age: 28,
+    Expertise: ["MySQL", "MongoDB", "Python"],
+    DOB: ISODate("1997-07-20"),
+    Email: "swapnil.jadhav@infosys.com",
+    Contact: "9898989898",
+    Address: [{ PAddr: "Mumbai", LAddr: "Andheri" }]
+  },
+  {
+    Emp_id: 103,
+    Name: { FName: "Tejas", LName: "Kale" },
+    CompanyName: "TCS",
+    Salary: 75000,
+    Designation: "Tester",
+    Age: 25,
+    Expertise: ["Selenium", "Java", "JMeter"],
+    DOB: ISODate("1998-02-10"),
+    Email: "tejas.kale@tcs.com",
+    Contact: "9812345678",
+    Address: [{ PAddr: "Pune", LAddr: "Wakad" }]
+  },
+  {
+    Emp_id: 104,
+    Name: { FName: "Rohan", LName: "Patil" },
+    CompanyName: "Wipro",
+    Salary: 85000,
+    Designation: "DBA",
+    Age: 29,
+    Expertise: ["Oracle", "SQL", "MongoDB"],
+    DOB: ISODate("1995-11-05"),
+    Email: "rohan.patil@wipro.com",
+    Contact: "9922334455",
+    Address: [{ PAddr: "Nashik", LAddr: "College Road" }]
+  },
+  {
+    Emp_id: 105,
+    Name: { FName: "Sneha", LName: "More" },
+    CompanyName: "TCS",
+    Salary: 95000,
+    Designation: "Developer",
+    Age: 27,
+    Expertise: ["React", "NodeJS", "MongoDB"],
+    DOB: ISODate("1998-05-10"),
+    Email: "sneha.more@tcs.com",
+    Contact: "9876543210",
+    Address: [{ PAddr: "Pune", LAddr: "Viman Nagar" }]
+  }
+])
+
+//--------------------------------------------
+// ⚙️ Step 3: Aggregation & Index Queries
+//--------------------------------------------
+
+// 1️⃣ Using aggregation: Return Designation with Total Salary above 200000
+db.Employee.aggregate([
+  {
+    $group: {
+      _id: "$Designation",
+      TotalSalary: { $sum: "$Salary" }
+    }
+  },
+  { $match: { TotalSalary: { $gt: 200000 } } }
+])
+
+
+// 2️⃣ Using Aggregate method: Return names and _id in uppercase and in alphabetical order
+db.Employee.aggregate([
+  {
+    $project: {
+      _id: { $toUpper: { $toString: "$_id" } },
+      FullName: {
+        $concat: [
+          { $toUpper: "$Name.FName" },
+          " ",
+          { $toUpper: "$Name.LName" }
+        ]
+      }
+    }
+  },
+  { $sort: { FullName: 1 } }
+])
+
+
+// 3️⃣ Using aggregation: Find Total Salary for Each City with Designation = "DBA"
+db.Employee.aggregate([
+  { $match: { Designation: "DBA" } },
+  { $unwind: "$Address" },
+  {
+    $group: {
+      _id: "$Address.PAddr",
+      TotalSalary: { $sum: "$Salary" }
+    }
+  }
+])
+
+
+// 4️⃣ Create Single Field Index on Designation field
+db.Employee.createIndex({ Designation: 1 })
+
+
+// 5️⃣ Create Multikey Index on Expertise field
+db.Employee.createIndex({ Expertise: 1 })
+
+
+// 6️⃣ Create an Index on Emp_id field and compare search time before/after index
+// Before creating index:
+db.Employee.find({ Emp_id: 9999 }).explain("executionStats")
+// Create Index:
+db.Employee.createIndex({ Emp_id: 1 })
+// After creating index:
+db.Employee.find({ Emp_id: 9999 }).explain("executionStats")
+
+
+// 7️⃣ Return List of Indexes created on Employee collection
+db.Employee.getIndexes()

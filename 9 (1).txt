@@ -1,0 +1,103 @@
+-- 🌟 DATABASE CREATION
+CREATE DATABASE store;
+USE store;
+
+-- 🌟 TABLE CREATION
+
+CREATE TABLE Customers (
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(50) NOT NULL,
+    Ccity VARCHAR(50),
+    CMobile VARCHAR(15) UNIQUE
+);
+
+CREATE TABLE Items (
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(50) NOT NULL,
+    Itype VARCHAR(50),
+    Iprice DECIMAL(10,2),
+    Icount INT
+);
+
+CREATE TABLE Purchase (
+    PNo INT PRIMARY KEY,
+    Pdate DATE,
+    Pquantity INT,
+    CNo INT,
+    INo INT
+);
+
+-- 🌟 ADD FOREIGN KEYS
+
+ALTER TABLE Purchase
+ADD CONSTRAINT fk_customer FOREIGN KEY (CNo) REFERENCES Customers(CNo);
+
+ALTER TABLE Purchase
+ADD CONSTRAINT fk_item FOREIGN KEY (INo) REFERENCES Items(INo);
+
+-- 🌟 INSERT SAMPLE DATA
+
+INSERT INTO Customers VALUES
+(1, 'Gopal', 'Pune', '9876543210'),
+(2, 'Maya', 'Mumbai', '9998887777'),
+(3, 'Ravi', 'Nashik', '8887776666'),
+(4, 'Priya', 'Pune', '7776665555');
+
+INSERT INTO Items VALUES
+(101, 'Notebook', 'Stationary', 500, 50),
+(102, 'Pen', 'Stationary', 20, 200),
+(103, 'Printer', 'Electronics', 8000, 10),
+(104, 'Pencil', 'Stationary', 10, 300),
+(105, 'Diary', 'Stationary', 900, 25);
+
+INSERT INTO Purchase VALUES
+(1, '2024-10-10', 5, 1, 101),
+(2, '2024-10-15', 10, 2, 105),
+(3, '2024-11-01', 3, 3, 103),
+(4, '2024-11-05', 6, 2, 104),
+(5, '2024-11-07', 4, 4, 101);
+
+-- 🌟 QUERIES
+
+-- 1️⃣ List all stationary items with price between 400 and 1000
+SELECT * 
+FROM Items
+WHERE Itype = 'Stationary'
+AND Iprice BETWEEN 400 AND 1000;
+
+-- 2️⃣ Change the mobile number of customer “Gopal”
+UPDATE Customers
+SET CMobile = '9123456789'
+WHERE Cname = 'Gopal';
+
+-- 3️⃣ Display the item with maximum price
+SELECT Iname, Iprice
+FROM Items
+WHERE Iprice = (SELECT MAX(Iprice) FROM Items);
+
+-- 4️⃣ Display all purchases sorted from most recent to oldest
+SELECT * 
+FROM Purchase
+ORDER BY Pdate DESC;
+
+-- 5️⃣ Count the number of customers in every city
+SELECT Ccity, COUNT(*) AS No_of_Customers
+FROM Customers
+GROUP BY Ccity;
+
+-- 6️⃣ Display all purchased quantity of Customer “Maya”
+SELECT c.Cname, SUM(p.Pquantity) AS Total_Quantity
+FROM Customers c
+JOIN Purchase p ON c.CNo = p.CNo
+WHERE c.Cname = 'Maya'
+GROUP BY c.Cname;
+
+-- 7️⃣ Create a view to show stationary items ordered by price descending
+CREATE VIEW StationaryView AS
+SELECT Iname, Iprice, Icount
+FROM Items
+WHERE Itype = 'Stationary'
+ORDER BY Iprice DESC;
+
+-- Display the view
+SELECT * FROM StationaryView;

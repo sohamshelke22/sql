@@ -1,0 +1,119 @@
+// Use or create database
+use employeeDB;
+
+// Drop old collection (optional if re-running)
+db.Employee.drop();
+
+// Insert 5 employee documents
+db.Employee.insertMany([
+  {
+    Name: { FName: "Prashant", LName: "Holam" },
+    Company_name: "TCS",
+    Salary: 55000,
+    Designation: "Tester",
+    Age: 25,
+    Expertise: ["MongoDB", "NodeJS"],
+    DOB: "2000-04-12",
+    Email_id: "prashant.h@tcs.com",
+    Contact: "9876543210",
+    Address: [
+      { PAddr: "Pune", LAddr: "Mumbai" }
+    ]
+  },
+  {
+    Name: { FName: "Sahil", LName: "Dhanawade" },
+    Company_name: "Infosys",
+    Salary: 48000,
+    Designation: "Developer",
+    Age: 28,
+    Expertise: ["React", "MongoDB", "Express"],
+    DOB: "1997-09-15",
+    Email_id: "sahil.d@infosys.com",
+    Contact: "9998887777",
+    Address: [
+      { PAddr: "Nagpur", LAddr: "Pune" }
+    ]
+  },
+  {
+    Name: { FName: "Prem", LName: "Pawar" },
+    Company_name: "Wipro",
+    Salary: 62000,
+    Designation: "Programmer",
+    Age: 32,
+    Expertise: ["Java", "Spring"],
+    DOB: "1993-02-10",
+    Email_id: "prem.p@wipro.com",
+    Contact: "8887776666",
+    Address: [
+      { PAddr: "Nashik", LAddr: "Mumbai" }
+    ]
+  },
+  {
+    Name: { FName: "Harsh", LName: "Chakote" },
+    Company_name: "Infosys",
+    Salary: 70000,
+    Designation: "Manager",
+    Age: 29,
+    Expertise: ["Leadership", "Management"],
+    DOB: "1996-07-19",
+    Email_id: "harsh.c@infosys.com",
+    Contact: "7776665555",
+    Address: [
+      { PAddr: "Delhi", LAddr: "Pune" }
+    ]
+  },
+  {
+    Name: { FName: "Mohit", LName: "Jadhav" },
+    Company_name: "TCS",
+    Salary: 40000,
+    Designation: "Developer",
+    Age: 26,
+    Expertise: ["C++", "Python"],
+    DOB: "1999-01-25",
+    Email_id: "mohit.j@tcs.com",
+    Contact: "6665554444",
+    Address: [
+      { PAddr: "Pune", LAddr: "Nashik" }
+    ]
+  }
+]);
+
+// 1️⃣ Find name of Employee where age < 30 and salary > 50000
+db.Employee.find(
+  { Age: { $lt: 30 }, Salary: { $gt: 50000 } },
+  { "Name.FName": 1, "Name.LName": 1, _id: 0 }
+);
+
+// 2️⃣ Create a new document if not already present
+db.Employee.updateOne(
+  { Designation: "Tester", Company_name: "TCS", Age: 25 },
+  {
+    $setOnInsert: {
+      Name: { FName: "Sneha", LName: "Kale" },
+      Salary: 30000,
+      Expertise: ["Manual Testing"],
+      DOB: "2000-10-10",
+      Email_id: "sneha.k@tcs.com",
+      Contact: "9123456789",
+      Address: [{ PAddr: "Pune", LAddr: "Mumbai" }]
+    }
+  },
+  { upsert: true }
+);
+
+// 3️⃣ Select all docs where Age < 30 OR Salary > 40000
+db.Employee.find({
+  $or: [{ Age: { $lt: 30 } }, { Salary: { $gt: 40000 } }]
+});
+
+// 4️⃣ Find documents where Designation != "Developer"
+db.Employee.find({ Designation: { $ne: "Developer" } });
+
+// 5️⃣ Find _id, Designation, Address, Name where Company_name = "Infosys"
+db.Employee.find(
+  { Company_name: "Infosys" },
+  { _id: 1, Designation: 1, Address: 1, Name: 1 }
+);
+
+// 6️⃣ Display only FName and LName of all Employees
+db.Employee.find({}, { "Name.FName": 1, "Name.LName": 1, _id: 0 });

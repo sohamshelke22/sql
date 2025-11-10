@@ -1,0 +1,134 @@
+//--------------------------------------------
+// 🧩 Step 1: Create / Use Database
+//--------------------------------------------
+use EmployeeDB_Agg
+
+
+//--------------------------------------------
+// 🧾 Step 2: Create Employee Collection and Insert 5 Documents
+//--------------------------------------------
+db.Employee.insertMany([
+  {
+    Emp_id: 101,
+    Name: { FName: "Prashant", LName: "Holam" },
+    CompanyName: "TCS",
+    Salary: 55000,
+    Designation: "Developer",
+    Age: 26,
+    Expertise: ["Java", "MongoDB", "NodeJS"],
+    DOB: ISODate("1999-03-15"),
+    Email: "prashant.holam@tcs.com",
+    Contact: "9823456711",
+    Address: [{ PAddr: "Pune", LAddr: "Kharadi" }]
+  },
+  {
+    Emp_id: 102,
+    Name: { FName: "Swapnil", LName: "Jadhav" },
+    CompanyName: "Infosys",
+    Salary: 65000,
+    Designation: "DBA",
+    Age: 28,
+    Expertise: ["MySQL", "MongoDB", "Python"],
+    DOB: ISODate("1997-07-20"),
+    Email: "swapnil.jadhav@infosys.com",
+    Contact: "9898989898",
+    Address: [{ PAddr: "Mumbai", LAddr: "Andheri" }]
+  },
+  {
+    Emp_id: 103,
+    Name: { FName: "Tejas", LName: "Kale" },
+    CompanyName: "TCS",
+    Salary: 75000,
+    Designation: "Tester",
+    Age: 25,
+    Expertise: ["Selenium", "Java", "JMeter"],
+    DOB: ISODate("1998-02-10"),
+    Email: "tejas.kale@tcs.com",
+    Contact: "9812345678",
+    Address: [{ PAddr: "Pune", LAddr: "Wakad" }]
+  },
+  {
+    Emp_id: 104,
+    Name: { FName: "Rohan", LName: "Patil" },
+    CompanyName: "Wipro",
+    Salary: 85000,
+    Designation: "DBA",
+    Age: 29,
+    Expertise: ["Oracle", "SQL", "MongoDB"],
+    DOB: ISODate("1995-11-05"),
+    Email: "rohan.patil@wipro.com",
+    Contact: "9922334455",
+    Address: [{ PAddr: "Nashik", LAddr: "College Road" }]
+  },
+  {
+    Emp_id: 105,
+    Name: { FName: "Sneha", LName: "More" },
+    CompanyName: "TCS",
+    Salary: 95000,
+    Designation: "Developer",
+    Age: 27,
+    Expertise: ["React", "NodeJS", "MongoDB"],
+    DOB: ISODate("1998-05-10"),
+    Email: "sneha.more@tcs.com",
+    Contact: "9876543210",
+    Address: [{ PAddr: "Pune", LAddr: "Viman Nagar" }]
+  }
+])
+
+
+//--------------------------------------------
+// ⚙️ Step 3: CRUD Operation Queries
+//--------------------------------------------
+
+// 1️⃣ Create a new document if not exists
+db.Employee.updateOne(
+  { Designation: "Tester", CompanyName: "TCS", Age: 25 },
+  {
+    $setOnInsert: {
+      Emp_id: 106,
+      Name: { FName: "Vikas", LName: "Mane" },
+      CompanyName: "TCS",
+      Salary: 60000,
+      Designation: "Tester",
+      Age: 25,
+      Expertise: ["Automation", "Selenium"],
+      DOB: ISODate("1999-12-12"),
+      Email: "vikas.mane@tcs.com",
+      Contact: "9876501234",
+      Address: [{ PAddr: "Pune", LAddr: "Hadapsar" }]
+    }
+  },
+  { upsert: true }
+)
+
+
+// 2️⃣ Find all employees working with CompanyName: "TCS" and increase their salary by 2000
+db.Employee.updateMany(
+  { CompanyName: "TCS" },
+  { $inc: { Salary: 2000 } }
+)
+
+
+// 3️⃣ Match documents where Address contains city = "Pune" and Pin_code = "411001"
+db.Employee.updateOne(
+  { "Address.PAddr": "Pune" },
+  { $set: { "Address.0.city": "Pune", "Address.0.Pin_code": "411001" } }
+)
+
+db.Employee.find({
+  Address: { $elemMatch: { city: "Pune", Pin_code: "411001" } }
+)
+
+
+// 4️⃣ Find employee details who are working as "Developer" or "Tester"
+db.Employee.find({
+  $or: [{ Designation: "Developer" }, { Designation: "Tester" }]
+})
+
+
+// 5️⃣ Drop a single document where Designation = "Developer"
+db.Employee.deleteOne({ Designation: "Developer" })
+
+
+// 6️⃣ Count total number of documents in the employee collection
+db.Employee.countDocuments()

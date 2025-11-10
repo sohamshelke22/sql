@@ -1,0 +1,110 @@
+// Create and use database
+use employeeDB;
+
+// Drop existing collection (optional for re-run)
+db.Employee.drop();
+
+// Insert at least 5 employee documents
+db.Employee.insertMany([
+  {
+    Name: { FName: "Gopal", LName: "Patil" },
+    Company_name: "TCS",
+    Salary: 35000,
+    Designation: "Programmer",
+    Age: 27,
+    Expertise: ["MongoDB", "NodeJS"],
+    DOB: "1998-05-14",
+    Email_id: "gopal@gmail.com",
+    Contact: "9876543210",
+    Address: [{ PAddr: "Pune", LAddr: "Mumbai" }]
+  },
+  {
+    Name: { FName: "Maya", LName: "Deshmukh" },
+    Company_name: "Infosys",
+    Salary: 40000,
+    Designation: "Tester",
+    Age: 25,
+    Expertise: ["Java", "MySQL"],
+    DOB: "1999-02-22",
+    Email_id: "maya@gmail.com",
+    Contact: "8887776666",
+    Address: [{ PAddr: "Mumbai", LAddr: "Pune" }]
+  },
+  {
+    Name: { FName: "Ravi", LName: "Kale" },
+    Company_name: "TCS",
+    Salary: 32000,
+    Designation: "Developer",
+    Age: 26,
+    Expertise: ["MongoDB", "ReactJS"],
+    DOB: "1997-08-18",
+    Email_id: "ravi@gmail.com",
+    Contact: "9998887777",
+    Address: [{ PAddr: "Nashik", LAddr: "Pune" }]
+  },
+  {
+    Name: { FName: "Priya", LName: "Joshi" },
+    Company_name: "Wipro",
+    Salary: 45000,
+    Designation: "Programmer",
+    Age: 28,
+    Expertise: ["MySQL", "Cassandra", "MongoDB"],
+    DOB: "1996-10-01",
+    Email_id: "priya@gmail.com",
+    Contact: "7776665555",
+    Address: [{ PAddr: "Pune", LAddr: "Chennai" }]
+  },
+  {
+    Name: { FName: "Suresh", LName: "Kulkarni" },
+    Company_name: "Infosys",
+    Salary: 28000,
+    Designation: "Analyst",
+    Age: 29,
+    Expertise: ["Python", "MySQL"],
+    DOB: "1995-04-20",
+    Email_id: "suresh@gmail.com",
+    Contact: "9997775555",
+    Address: [{ PAddr: "Pune", LAddr: "Delhi" }]
+  }
+]);
+
+// 1️⃣ Find all Programmers with salary > 30000
+db.Employee.find({ Designation: "Programmer", Salary: { $gt: 30000 } });
+
+// 2️⃣ Insert new document if no Tester in TCS with Age 25
+db.Employee.updateOne(
+  { Designation: "Tester", Company_name: "TCS", Age: 25 },
+  {
+    $setOnInsert: {
+      Name: { FName: "Neha", LName: "More" },
+      Salary: 30000,
+      Expertise: ["MongoDB", "Testing"],
+      DOB: "2000-03-10",
+      Email_id: "neha@gmail.com",
+      Contact: "9876501234",
+      Address: [{ PAddr: "Pune", LAddr: "Pune" }]
+    }
+  },
+  { upsert: true }
+);
+
+// 3️⃣ Increase salary by 10000 for Infosys employees
+db.Employee.updateMany(
+  { Company_name: "Infosys" },
+  { $inc: { Salary: 10000 } }
+);
+
+// 4️⃣ Reduce salary by 5000 for TCS employees
+db.Employee.updateMany(
+  { Company_name: "TCS" },
+  { $inc: { Salary: -5000 } }
+);
+
+// 5️⃣ Return documents where Designation ≠ Tester
+db.Employee.find({ Designation: { $ne: "Tester" } });
+
+// 6️⃣ Find employees with exact match of Expertise array
+db.Employee.find({
+  Expertise: { $all: ["MongoDB", "MySQL", "Cassandra"] }
+});
+

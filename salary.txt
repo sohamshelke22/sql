@@ -1,0 +1,30 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_avg_sal NUMBER;
+BEGIN
+
+    SELECT AVG(salary)
+    INTO v_avg_sal
+    FROM emp;
+
+    -- Insert records BEFORE updating (to capture old salaries)
+    INSERT INTO increment_salary(emp_no, salary)
+    SELECT emp_no, salary + (salary * 0.10)
+    FROM emp
+    WHERE salary < v_avg_sal;
+
+    -- Update salary below average by 10%
+    UPDATE emp
+    SET salary = salary + (salary * 0.10)
+    WHERE salary < v_avg_sal;
+
+    DBMS_OUTPUT.PUT_LINE('Salary updated and records inserted in increment_salary table.');
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No employees found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+/

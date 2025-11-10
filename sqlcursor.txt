@@ -1,0 +1,35 @@
+DECLARE
+    pname  nrollcall.name%TYPE;
+    proll  nrollcall.roll%TYPE;
+    pclass nrollcall.class%TYPE;
+    pcount NUMBER;
+
+    -- Cursor should read from NROLLCALL, not OROLLCALL
+    CURSOR cur_check(r NUMBER) IS
+        SELECT name, roll, class 
+        FROM nrollcall
+        WHERE roll > r;   -- start from roll > 0
+BEGIN
+    OPEN cur_check(0);
+    LOOP
+        FETCH cur_check INTO pname, proll, pclass;
+        EXIT WHEN cur_check%NOTFOUND;
+
+        -- Check if record already exists in OROLLCALL
+        SELECT COUNT(*) INTO pcount
+        FROM orollcall
+        WHERE roll = proll;
+
+        IF pcount = 0 THEN
+            INSERT INTO orollcall(roll, name, class)
+            VALUES(proll, pname, pclass);
+
+            DBMS_OUTPUT.PUT_LINE('Inserted: '|| pname || ' ' || proll || ' ' || pclass);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Skipped already exists -> '||proll);
+        END IF;
+    END LOOP;
+
+    CLOSE cur_check;
+END;
+/

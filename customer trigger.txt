@@ -1,0 +1,30 @@
+SET SERVEROUTPUT ON;
+
+CREATE OR REPLACE TRIGGER trg_salary_diff
+BEFORE INSERT OR UPDATE OR DELETE ON customers
+FOR EACH ROW
+BEGIN
+    -- For UPDATE, show salary difference
+    IF UPDATING THEN
+        DBMS_OUTPUT.PUT_LINE(
+            'Update Operation: Salary changed from ' || :OLD.salary ||
+            ' to ' || :NEW.salary ||
+            ' | Difference = ' || (:NEW.salary - :OLD.salary)
+        );
+    END IF;
+
+    -- For INSERT, show new salary
+    IF INSERTING THEN
+        DBMS_OUTPUT.PUT_LINE(
+            'Insert Operation: New Salary = ' || :NEW.salary
+        );
+    END IF;
+
+    -- For DELETE, show old salary
+    IF DELETING THEN
+        DBMS_OUTPUT.PUT_LINE(
+            'Delete Operation: Old Salary = ' || :OLD.salary
+        );
+    END IF;
+END;
+/

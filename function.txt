@@ -1,0 +1,35 @@
+-- create or replace FUNCTION age_calc
+-- (
+--     pdob date,
+--     pmonth out number,
+--     pdays out number
+-- )
+-- RETURN number 
+-- as 
+--     pyears number;
+-- BEGIN
+--     pyears:=EXTRACT(YEAR from sysdate)-EXTRACT(year from pdob);
+--     pmonth:=EXTRACT(month from sysdate)-EXTRACT(month from pdob);
+--     pdays:=EXTRACT(day from sysdate)-EXTRACT(day from pdob);
+
+--     if pdays<0 then
+--         pmonth:=pmonth-1;
+--         pdays:=pdays+30;
+--     end if;
+
+--     if pdays<0 then
+--         pyears:=pyears-1;
+--         pmonth:=pmonth+12;
+--     end if;
+--     return pyears;
+-- end;
+set SERVEROUTPUT on;
+DECLARE
+    pyears number;
+    pmonth number;
+    pdays number;
+BEGIN
+    pyears:=AGE_CALC(date '2005-11-9',pmonth,pdays);
+    dbms_output.put_line('Age; '||pyears||'years'||pmonth||'months'||pdays||'days');
+end;
+/

@@ -1,0 +1,32 @@
+SET SERVEROUTPUT ON;
+
+DECLARE
+    v_roll stud.roll%TYPE := &roll;  -- user input
+    v_att stud.attendance%TYPE;
+BEGIN
+    -- Get attendance
+    SELECT attendance 
+    INTO v_att
+    FROM stud
+    WHERE roll = v_roll;
+
+    -- Check attendance & update status
+    IF v_att < 75 THEN
+        UPDATE stud 
+        SET status = 'Detained'
+        WHERE roll = v_roll;
+        DBMS_OUTPUT.PUT_LINE('Term not granted');
+    ELSE
+        UPDATE stud 
+        SET status = 'Not Detained'
+        WHERE roll = v_roll;
+        DBMS_OUTPUT.PUT_LINE('Term granted');
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('❌ Roll number not found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('⚠ Error: ' || SQLERRM);
+END;
+/

@@ -1,0 +1,78 @@
+CREATE TABLE Companies (
+    comp_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    cost DECIMAL(10,2),
+    year INT
+);
+
+CREATE TABLE Orders (
+    comp_id INT,
+    domain VARCHAR(50),
+    quantity INT,
+    FOREIGN KEY (comp_id) REFERENCES Companies(comp_id)
+);
+
+INSERT INTO Companies VALUES
+(1, 'TCS', 50000, 2020),
+(2, 'Infosys', 45000, 2021),
+(3, 'Wipro', 40000, 2022),
+(4, 'TechM', 48000, 2023);
+
+INSERT INTO Orders VALUES
+(1, 'AI', 5),
+(2, 'Cloud', 8),
+(3, 'ML', 6);
+
+
+1️⃣ Inner Join
+SELECT c.name, c.cost, o.domain, o.quantity
+FROM Companies c
+INNER JOIN Orders o ON c.comp_id = o.comp_id;
+
+2️⃣ Left Outer Join
+SELECT c.name, c.cost, o.domain, o.quantity
+FROM Companies c
+LEFT JOIN Orders o ON c.comp_id = o.comp_id;
+
+3️⃣ Right Outer Join
+SELECT c.name, c.cost, o.domain, o.quantity
+FROM Companies c
+RIGHT JOIN Orders o ON c.comp_id = o.comp_id;
+
+4️⃣ Union Operator
+SELECT c.name, c.cost, o.domain, o.quantity
+FROM Companies c
+INNER JOIN Orders o ON c.comp_id = o.comp_id
+
+UNION
+
+SELECT c.name, c.cost, o.domain, o.quantity
+FROM Companies c
+RIGHT JOIN Orders o ON c.comp_id = o.comp_id;
+
+✅ Step 4: Create Views
+5️⃣ Create View1 (Join View with Company Name & Quantity)
+CREATE OR REPLACE VIEW View1 AS
+SELECT c.name, o.quantity
+FROM Companies c
+JOIN Orders o ON c.comp_id = o.comp_id;
+
+6️⃣ Create View2 (Simple View for DML operations)
+CREATE OR REPLACE VIEW View2 AS
+SELECT comp_id, name
+FROM Companies;
+
+
+
+-- Insert
+INSERT INTO View2 VALUES (5, 'HCL');
+
+-- Update
+UPDATE View2 SET name = 'HCL Tech' WHERE comp_id = 5;
+
+-- Delete
+DELETE FROM View2 WHERE comp_id = 5;
+
+✅ Step 5: Display the Views
+SELECT * FROM View1;
+SELECT * FROM View2;

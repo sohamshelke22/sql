@@ -1,0 +1,35 @@
+declare
+	prollno borrower.rollno%type:=&rollno;
+	pnameofbook borrower.nameofbook%type:='&nameofbook';
+	pdateofissue borrower.dateofissue%type;
+	pdays number;
+	amount number;
+	nodata exception;
+begin
+	select dateofissue into pdateofissue from borrower 
+	where rollno=prollno and nameofbook=pnameofbook;
+	
+	selECT TRUNC(SYSDATE) - pdateofissue
+	INTO pdays
+ 	FROM dual;
+
+	if pdays>30 then
+		amount:=pdays*50;
+	elsif(pdays between 15 and 30) then
+		amount:=pdays*5;
+	else
+		amount:=0;
+	end if;
+	
+	if amount>0 then
+		insert into fine values(prollno,sysdate,amount);
+	end if;
+
+	if amount>0 then
+		update borrower set status='R' where rollno=prollno;
+	end if;
+exception
+	when nodata then
+		dbms_output.put_line('no record found.');
+end;
+/
