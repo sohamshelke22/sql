@@ -1,0 +1,172 @@
+Step 1: Setup (one-time)
+
+Install MongoDB server and make sure itâ€™s running on your machine.
+
+Install Python MongoDB driver:
+
+pip install pymongo
+
+
+
+
+
+
+
+
+
+
+Step 2: Insert operation â€” Add a new employee document
+
+Create a file called mongo_insert.py and paste this code:
+
+from pymongo import MongoClient
+
+def insert_employee(name, age, position):
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['testdb']  # Your database name
+    collection = db['employees']  # Your collection name
+    
+    employee = {
+        "name": name,
+        "age": age,
+        "position": position
+    }
+    
+    result = collection.insert_one(employee)
+    print(f"Inserted employee with id: {result.inserted_id}")
+    
+    client.close()
+
+if __name__ == "__main__":
+    insert_employee("Alice Johnson", 30, "Developer")
+
+
+Run this:
+python mongo_insert.py
+
+
+You should see something like:
+
+Inserted employee with id: 650a4eac9f1e2e4a7c8d3e22
+
+
+
+
+
+
+
+
+
+Step 3: View all employees (Read)
+
+Create a new file mongo_view.py:
+
+from pymongo import MongoClient
+
+def view_employees():
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['testdb']
+    collection = db['employees']
+    
+    employees = collection.find()
+    
+    print("Employees in DB:")
+    for emp in employees:
+        print(emp)
+    
+    client.close()
+
+if __name__ == "__main__":
+    view_employees()
+
+Run this:
+python mongo_view.py
+
+
+Youâ€™ll see all employees including the one you inserted.
+
+
+
+
+
+
+Step 4: Update employeeâ€™s position
+
+Create mongo_update.py:
+
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+def update_employee(emp_id, new_position):
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['testdb']
+    collection = db['employees']
+    
+    result = collection.update_one(
+        {"_id": ObjectId(emp_id)},
+        {"$set": {"position": new_position}}
+    )
+    
+    print(f"Matched {result.matched_count} documents, Modified {result.modified_count} documents.")
+    
+    client.close()
+
+if __name__ == "__main__":
+    emp_id = input("Enter employee _id to update: ").strip()
+    new_position = input("Enter new position: ").strip()
+    update_employee(emp_id, new_position)
+
+Run this:
+python mongo_update.py
+
+
+
+Paste the _id you got from insert or view.
+
+Type a new position, e.g., â€œSenior Developerâ€
+
+
+
+
+
+
+Step 5: Delete employee
+
+Create mongo_delete.py:
+
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+
+def delete_employee(emp_id):
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['testdb']
+    collection = db['employees']
+    
+    result = collection.delete_one({"_id": ObjectId(emp_id)})
+    
+    print(f"Deleted {result.deleted_count} document(s).")
+    
+    client.close()
+
+if __name__ == "__main__":
+    emp_id = input("Enter employee _id to delete: ").strip()
+    delete_employee(emp_id)
+
+Run this:
+python mongo_delete.py
+
+
+Paste the _id of the employee you want to delete.
+
+
+
+Bonus: How to see data on Mongo shell?
+
+
+
+
+Run mongo command in terminal
+
+Use your database: use testdb
+
+List data: db.employees.find().pretty()
